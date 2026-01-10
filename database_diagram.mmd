@@ -1,0 +1,50 @@
+erDiagram
+    User ||--o{ Course : "creates (as instructor)"
+    User ||--o{ Enrollment : "enrolls"
+    Category ||--o{ Course : "categorizes"
+    Course ||--o{ Lesson : "contains"
+    Course ||--o{ Enrollment : "has"
+    
+    User {
+        int id PK
+        string username UK
+        string email
+        string password
+        string role "student/teacher/admin"
+        datetime date_joined
+        boolean is_active
+    }
+    
+    Category {
+        int id PK
+        string name
+        string slug UK
+    }
+    
+    Course {
+        int id PK
+        int instructor_id FK
+        int category_id FK
+        string title
+        text description
+        datetime created_at
+        datetime updated_at
+    }
+    
+    Lesson {
+        int id PK
+        int course_id FK
+        string title
+        string video_url
+        text content
+        int order
+        datetime created_at
+        datetime updated_at
+    }
+    
+    Enrollment {
+        int id PK
+        int student_id FK
+        int course_id FK
+        datetime enrolled_at
+    }

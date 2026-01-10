@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>LMS API Test cURLs</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 20px;
+        line-height: 1.6;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        overflow: hidden;
+      }
+
+      header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 40px;
+        text-align: center;
+      }
+
+      h1 {
+        font-size: 2.5em;
+        margin-bottom: 10px;
+      }
+
+      .base-url {
+        background: rgba(255, 255, 255, 0.2);
+        padding: 10px 20px;
+        border-radius: 6px;
+        display: inline-block;
+        margin-top: 10px;
+        font-family: "Courier New", monospace;
+      }
+
+      .content {
+        padding: 40px;
+      }
+
+      .section {
+        margin-bottom: 40px;
+        border-left: 4px solid #667eea;
+        padding-left: 20px;
+      }
+
+      h2 {
+        color: #667eea;
+        margin-bottom: 20px;
+        font-size: 1.8em;
+      }
+
+      h3 {
+        color: #333;
+        margin: 20px 0 10px 0;
+        font-size: 1.3em;
+      }
+
+      .code-block {
+        background: #1e1e1e;
+        color: #d4d4d4;
+        padding: 20px;
+        border-radius: 8px;
+        overflow-x: auto;
+        margin: 10px 0;
+        font-family: "Courier New", monospace;
+        font-size: 0.9em;
+        position: relative;
+      }
+
+      .code-block:hover .copy-btn {
+        opacity: 1;
+      }
+
+      .copy-btn {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: #667eea;
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 4px;
+        cursor: pointer;
+        opacity: 0;
+        transition: opacity 0.3s;
+      }
+
+      .copy-btn:hover {
+        background: #5568d3;
+      }
+
+      .note {
+        background: #fff3cd;
+        border-left: 4px solid #ffc107;
+        padding: 15px;
+        margin: 15px 0;
+        border-radius: 4px;
+      }
+
+      .workflow {
+        background: #e7f3ff;
+        border-left: 4px solid #2196f3;
+        padding: 20px;
+        border-radius: 4px;
+      }
+
+      .workflow ol {
+        margin-left: 20px;
+      }
+
+      .workflow li {
+        margin: 8px 0;
+      }
+
+      code {
+        background: #f4f4f4;
+        padding: 2px 6px;
+        border-radius: 3px;
+        font-family: "Courier New", monospace;
+      }
+
+      .highlight {
+        background: #fff59d;
+        padding: 2px 4px;
+        border-radius: 3px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>🎓 LMS API Test cURLs</h1>
+        <div class="base-url">Base URL: http://localhost:8000</div>
+      </header>
+
+      <div class="content">
+        <div class="note">
+          <strong>Setup:</strong> Set your access token as an environment
+          variable after login:<br />
+          <code>export TOKEN="your_access_token_here"</code>
+        </div>
+
+        <!-- Users API -->
+        <div class="section">
+          <h2>1. Users API (<code>/api/users/</code>)</h2>
+
+          <h3>Register User (Student)</h3>
+          <div class="code-block">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            curl -X POST http://localhost:8000/api/users/register/ \ -H
+            "Content-Type: application/json" \ -d '{"username": "student1",
+            "password": "password123", "email": "student1@example.com", "role":
+            "student"}'
+          </div>
+
+          <h3>Register User (Teacher)</h3>
+          <div class="code-block">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            curl -X POST http://localhost:8000/api/users/register/ \ -H
+            "Content-Type: application/json" \ -d '{"username": "teacher1",
+            "password": "password123", "email": "teacher1@example.com", "role":
+            "teacher"}'
+          </div>
+
+          <h3>Login (Get Access Token)</h3>
+          <div class="code-block">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            curl -X POST http://localhost:8000/api/users/login/ \ -H
+            "Content-Type: application/json" \ -d '{"username": "teacher1",
+            "password": "password123"}'
+          </div>
+          <div class="note">
+            <strong>Response:</strong> Copy <code>access</code> and
+            <code>refresh</code> tokens.
+          </div>
+
+          <h3>Refresh Token</h3>
+          <div class="code-block">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            curl -X POST http://localhost:8000/api/users/token/refresh/ \ -H
+            "Content-Type: application/json" \ -d '{"refresh":
+            "YOUR_REFRESH_TOKEN"}'
+          </div>
+        </div>
+
+        <!-- Categories API -->
+        <div class="section">
+          <h2>2. Categories API (<code>/api/courses/categories/</code>)</h2>
+
+          <h3>Create Category</h3>
+          <div class="code-block">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            curl -X POST http://localhost:8000/api/courses/categories/ \ -H
+            "Authorization: Bearer $TOKEN" \ -H "Content-Type: application/json"
+            \ -d '{"name": "Programming", "slug": "programming"}'
+          </div>
+
+          <h3>List All Categories</h3>
+          <div class="code-block">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            curl -X GET http://localhost:8000/api/courses/categories/ \ -H
+            "Authorization: Bearer $TOKEN"
+          </div>
+        </div>
+
+        <!-- Courses API -->
+        <div class="section">
+          <h2>3. Courses API (<code>/api/courses/</code>)</h2>
+
+          <h3>Create Course <span class="highlight">⚠️ Teachers Only</span></h3>
+          <div class="code-block">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            curl -X POST http://localhost:8000/api/courses/ \ -H "Authorization:
+            Bearer $TOKEN" \ -H "Content-Type: application/json" \ -d '{"title":
+            "Django Fundamentals", "description": "Learn Django from scratch",
+            "category": 1}'
+          </div>
+
+          <h3>List All Courses</h3>
+          <div class="code-block">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            curl -X GET http://localhost:8000/api/courses/ \ -H "Authorization:
+            Bearer $TOKEN"
+          </div>
+
+          <h3>Get Course Details</h3>
+          <div class="code-block">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            curl -X GET http://localhost:8000/api/courses/1/ \ -H
+            "Authorization: Bearer $TOKEN"
+          </div>
+
+          <h3>
+            Update Course (PUT) <span class="highlight">⚠️ Teachers Only</span>
+          </h3>
+          <div class="code-block">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            curl -X PUT http://localhost:8000/api/courses/1/ \ -H
+            "Authorization: Bearer $TOKEN" \ -H "Content-Type: application/json"
+            \ -d '{"title": "Django Advanced", "description": "Advanced Django
+            concepts", "category": 1}'
+          </div>
+
+          <h3>
+            Update Course (PATCH)
+            <span class="highlight">⚠️ Teachers Only</span>
+          </h3>
+          <div class="code-block">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            curl -X PATCH http://localhost:8000/api/courses/1/ \ -H
+            "Authorization: Bearer $TOKEN" \ -H "Content-Type: application/json"
+            \ -d '{"title": "Django Pro"}'
+          </div>
+
+          <h3>Delete Course <span class="highlight">⚠️ Teachers Only</span></h3>
+          <div class="code-block">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            curl -X DELETE http://localhost:8000/api/courses/1/ \ -H
+            "Authorization: Bearer $TOKEN"
+          </div>
+        </div>
+
+        <!-- Lessons API -->
+        <div class="section">
+          <h2>4. Lessons API (<code>/api/lessons/</code>)</h2>
+
+          <h3>Create Lesson</h3>
+          <div class="code-block">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            curl -X POST http://localhost:8000/api/lessons/ \ -H "Authorization:
+            Bearer $TOKEN" \ -H "Content-Type: application/json" \ -d
+            '{"course": 1, "title": "Introduction to Django", "video_url":
+            "https://example.com/video1.mp4", "content": "Django is a web
+            framework...", "order": 1}'
+          </div>
+
+          <h3>List All Lessons</h3>
+          <div class="code-block">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            curl -X GET http://localhost:8000/api/lessons/ \ -H "Authorization:
+            Bearer $TOKEN"
+          </div>
+
+          <h3>Get Lesson Details</h3>
+          <div class="code-block">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            curl -X GET http://localhost:8000/api/lessons/1/ \ -H
+            "Authorization: Bearer $TOKEN"
+          </div>
+
+          <h3>Update Lesson (PUT)</h3>
+          <div class="code-block">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            curl -X PUT http://localhost:8000/api/lessons/1/ \ -H
+            "Authorization: Bearer $TOKEN" \ -H "Content-Type: application/json"
+            \ -d '{"course": 1, "title": "Django Setup", "video_url":
+            "https://example.com/video2.mp4", "content": "Updated content",
+            "order": 1}'
+          </div>
+
+          <h3>Update Lesson (PATCH)</h3>
+          <div class="code-block">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            curl -X PATCH http://localhost:8000/api/lessons/1/ \ -H
+            "Authorization: Bearer $TOKEN" \ -H "Content-Type: application/json"
+            \ -d '{"title": "Django Installation"}'
+          </div>
+
+          <h3>Delete Lesson</h3>
+          <div class="code-block">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            curl -X DELETE http://localhost:8000/api/lessons/1/ \ -H
+            "Authorization: Bearer $TOKEN"
+          </div>
+        </div>
+
+        <!-- Enrollments API -->
+        <div class="section">
+          <h2>5. Enrollments API (<code>/api/enrollments/</code>)</h2>
+
+          <h3>Enroll in Course (as Student)</h3>
+          <div class="code-block">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            curl -X POST http://localhost:8000/api/enrollments/ \ -H
+            "Authorization: Bearer $TOKEN" \ -H "Content-Type: application/json"
+            \ -d '{"course": 1}'
+          </div>
+
+          <h3>List My Enrollments</h3>
+          <div class="code-block">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            curl -X GET http://localhost:8000/api/enrollments/ \ -H
+            "Authorization: Bearer $TOKEN"
+          </div>
+        </div>
+
+        <!-- Testing Workflow -->
+        <div class="workflow">
+          <h2>📋 Testing Workflow</h2>
+          <ol>
+            <li>
+              <strong>Register a teacher</strong> and <strong>login</strong> to
+              get token
+            </li>
+            <li><strong>Create a category</strong></li>
+            <li><strong>Create a course</strong> (as teacher)</li>
+            <li><strong>Create lessons</strong> for the course</li>
+            <li>
+              <strong>Register a student</strong> and
+              <strong>login</strong> with student credentials
+            </li>
+            <li><strong>Enroll in the course</strong> (as student)</li>
+            <li><strong>List enrollments</strong> to verify</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      function copyCode(button) {
+        const codeBlock = button.parentElement;
+        const code = codeBlock.textContent.replace("Copy", "").trim();
+
+        navigator.clipboard.writeText(code).then(() => {
+          button.textContent = "Copied!";
+          button.style.background = "#4caf50";
+          setTimeout(() => {
+            button.textContent = "Copy";
+            button.style.background = "#667eea";
+          }, 2000);
+        });
+      }
+    </script>
+  </body>
+</html>
