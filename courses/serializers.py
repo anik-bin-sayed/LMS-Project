@@ -10,7 +10,8 @@ class CategorySerializer(serializers.ModelSerializer):
 
 class CourseSerializer(serializers.ModelSerializer):
     instructor = serializers.ReadOnlyField(source='instructor.username')
+    category_detail = CategorySerializer(source='category', read_only=True)
 
     class Meta:
         model = Course
-        fields = ['id', 'category', 'title', 'description', 'instructor', 'created_at', 'updated_at']
+        fields = ['id', 'category','category_detail', 'title', 'description', 'instructor', 'created_at', 'updated_at']

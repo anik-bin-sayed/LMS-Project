@@ -5,7 +5,9 @@ from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated
-from rest_framework.generics import CreateAPIView,RetrieveUpdateAPIView,ListAPIView, UpdateAPIView
+from rest_framework.generics import (
+    CreateAPIView,RetrieveUpdateAPIView,ListAPIView, UpdateAPIView, RetrieveAPIView
+)
 from rest_framework.throttling import ScopedRateThrottle
 from rest_framework.decorators import permission_classes
 from rest_framework_simplejwt.tokens import RefreshToken,TokenError
@@ -26,8 +28,8 @@ class RegisterView(CreateAPIView):
     serializer_class = UserSerializer
 
 # login view
-@permission_classes([AllowAny])
 class LoginView(APIView):
+    permission_classes = (AllowAny,)
     throttle_classes = [ScopedRateThrottle]
     throttle_scope = 'login'
     
@@ -49,6 +51,7 @@ class LoginView(APIView):
             {"message":"Login successful"},
             status=status.HTTP_200_OK
         )
+
         response.set_cookie(
             key="access_token",
             value = str(refresh.access_token),
@@ -83,7 +86,6 @@ class RefreshTokenView(APIView):
             access_token = refresh.access_token
 
             new_refresh_token = str(refresh)
-
         except TokenError:
             response = Response({"error": "Invalid or expired refresh token"}, status=401)
             response.delete_cookie("access_token")
@@ -98,7 +100,7 @@ class RefreshTokenView(APIView):
             httponly=True,
             secure=False,     
             samesite='Lax',
-            max_age=5*60      
+            max_age=60*10
         )
 
         response.set_cookie(
@@ -107,7 +109,7 @@ class RefreshTokenView(APIView):
             httponly=True,
             secure=False,    
             samesite='Lax',
-            max_age=24*60*60  
+            max_age=24*60*60
         )
 
         return response
@@ -125,6 +127,11 @@ class UserUpdateView(UpdateAPIView):
 
     def get_queryset(self):
         return User.objects.filter(id=self.request.user.id)
+    
+class RetrieveView(RetrieveAPIView):
+    queryset = User.objects.all()
+    permission_classes=[IsAuthenticated, IsAdminOnly]
+    serializer_class = UserSerializer
 
 # only admin view all teacher and student list
 class AdminListView(ListAPIView):
@@ -133,10 +140,15 @@ class AdminListView(ListAPIView):
     permission_classes = [IsAuthenticated, IsAdminOnly]
 
     def get_queryset(self):
-        current_user = self.request.user
+        return User.objects.exclude(id=self.request.user.id)
 
-        return User.objects.exclude(id=current_user.id)
-
+# user profile
+class ProfileView(RetrieveAPIView):
+    serializer_class=UserSerializer
+    permission_classes=[IsAuthenticated]
+    
+    def get_object(self):
+        return self.request.user
 
 # logout
 class LogoutView(APIView):

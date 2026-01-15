@@ -122,6 +122,8 @@ STATIC_URL = 'static/'
 
 AUTH_USER_MODEL = 'users.User'
 
+
+# From rest framework
 REST_FRAMEWORK = {
     # Authentication
     "DEFAULT_AUTHENTICATION_CLASSES": (

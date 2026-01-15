@@ -12,7 +12,9 @@ from .views import (
     RefreshTokenView,
     AdminRoleUpdateView,
     AdminListView,
-    UserUpdateView
+    UserUpdateView,
+    ProfileView,
+    RetrieveView
 )
 
 
@@ -24,6 +26,8 @@ urlpatterns = [
     path('token/refresh/', RefreshTokenView.as_view(), name='token_refresh'),
 
     path('list/', AdminListView.as_view(), name='list'),
+    path('profile/', ProfileView.as_view(), name='profile'),
     path('role/<int:pk>/', AdminRoleUpdateView.as_view(), name='only-admin'),
-    path('info/<int:pk>/', UserUpdateView.as_view(), name='update_user_info')
+    path('edit-info/<int:pk>/', UserUpdateView.as_view(), name='update_user_info'),
+    path("retrieve/<int:pk>",RetrieveView.as_view(), name="retrieve_view" )
 ]
